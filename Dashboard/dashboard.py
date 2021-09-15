@@ -3,6 +3,6 @@ from PIL import Image
 
 st.title("Auto Analytics")
 
-image = Image.open("assets//logo.png")
+image = Image.open("assets/logo.png")
 st.image(image)
 
