@@ -46,25 +46,25 @@ st.sidebar.image(image)
 ###Read Data
 @st.cache()
 def get_sapres():
-    df = pd.read_csv("data//spare_parts_final.csv")
+    df = pd.read_csv("Dashboard//data//spare_parts_final.csv")
     return df
 
 ##Read Sales data
 @st.cache()
 def get_sales():
-    df = pd.read_csv("data//car_sales.csv")
+    df = pd.read_csv("Dashboard//data//car_sales.csv")
     return df
 
 ##Read Forecast Data 
 @st.cache()
 def get_forecast():
-    df= pd.read_csv("data//stocks_data.csv")
+    df= pd.read_csv("Dashboard//data//stocks_data.csv")
     df["Date"] = pd.to_datetime(df['Date'])
     return df
 
 @st.cache()
 def get_gtrends():
-    df= pd.read_csv("data//gtrends_car_data.csv")
+    df= pd.read_csv("Dashboard//data//gtrends_car_data.csv")
     df["Date"] = pd.to_datetime(df['Date'])
     return df
 
@@ -77,7 +77,7 @@ def auto_analysis():
     df_sales = get_sales()
     col1, col2  = st.columns(2)
     with col1:
-        df_multi = pd.read_csv("data//multiTimeline.csv")
+        df_multi = pd.read_csv("Dashboard//data//multiTimeline.csv")
         df_multi["Week"] = pd.to_datetime(df_multi['Week'])
         df_multi.sort_values(by=['Week'], inplace=True, ascending=False)
         # st.dataframe(df_multi)
@@ -92,7 +92,7 @@ def auto_analysis():
         st.plotly_chart(fig)
     
     with col2:
-        df_top = pd.read_csv("data//bybrandspares.csv")
+        df_top = pd.read_csv("Dashboard//data//bybrandspares.csv")
         df_top = df_top.head(10)
         df_top = df_top.sort_values(['count'], ascending=True)
         fig = px.bar(df_top, x='count', y='brand', text='count')
@@ -452,10 +452,10 @@ st.sidebar.info(
         [our documentation](https://github.com/vasudevmaduri/OnePlus-Analysis/tree/dev).
 
         **Our Team**:
-        - [Sudha Saini](https://www.linkedin.com/in/sushmita-sahu-764b1865/)
-        - [Ashish Shingla](https://www.linkedin.com/in/shoumi786/)
+        - [Ashish Shingla](https://www.linkedin.com/in/ashish--singla)
+        - [Charika Bhatia](https://www.linkedin.com/in/charika-bhatia-21569a96)
         - [Mahima Sharma](https://www.linkedin.com/in/mahima-sharma/)
-        - [Charika Bhatia](https://www.linkedin.com/in/yash-srivastava-2b266515a/)
+        - [Sudha Saini](http://linkedin.com/in/sudha-saini)
         - [Vasudev Maduri](https://www.linkedin.com/in/vasudevmaduri/)
 """
     )
