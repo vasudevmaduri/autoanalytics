@@ -99,3 +99,6 @@ tensorflow
 tflearn==0.3.2
 Werkzeug==0.12.2
 plotly
+sqlalchemy
+psycopg2
+pg8000
