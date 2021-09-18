@@ -101,4 +101,4 @@ Werkzeug==0.12.2
 plotly
 sqlalchemy
 psycopg2
-pg8000
+ pg8000<=1.16.5
