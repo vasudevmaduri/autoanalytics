@@ -40,7 +40,7 @@ st.markdown(
 )
 pd.options.plotting.backend = "plotly"
 
-image = Image.open("logo.png")
+image = Image.open("Dashboard//logo.png")
 st.sidebar.image(image)
 
 ###Read Data
@@ -55,23 +55,95 @@ def get_sales():
     df = pd.read_csv("data//car_sales.csv")
     return df
 
+##Read Forecast Data 
+@st.cache()
+def get_forecast():
+    df= pd.read_csv("data//stocks_data.csv")
+    df["Date"] = pd.to_datetime(df['Date'])
+    return df
 
+@st.cache()
+def get_gtrends():
+    df= pd.read_csv("data//gtrends_car_data.csv")
+    df["Date"] = pd.to_datetime(df['Date'])
+    return df
 
 # st.sidebar.image(image, user_column_width = False, width = 150 )
 
 def auto_analysis():
 
     st.markdown("<h2 style='text-align: center; color: black;'><b>Automobile Analysis 📉📈<b></h1>", unsafe_allow_html=True)
+    
     df_sales = get_sales()
-
-    fig = px.line(df_sales, x="Date", y=df_sales.columns,
+    col1, col2  = st.columns(2)
+    with col1:
+        df_multi = pd.read_csv("data//multiTimeline.csv")
+        df_multi["Week"] = pd.to_datetime(df_multi['Week'])
+        df_multi.sort_values(by=['Week'], inplace=True, ascending=False)
+        # st.dataframe(df_multi)
+        fig = px.line(df_multi, x="Week", y="Car",
+                title='Automobile Trends')
+        fig.update_layout({
+                    'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                    'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                    },
+                    )
+        
+        st.plotly_chart(fig)
+    
+    with col2:
+        df_top = pd.read_csv("data//bybrandspares.csv")
+        df_top = df_top.head(10)
+        df_top = df_top.sort_values(['count'], ascending=True)
+        fig = px.bar(df_top, x='count', y='brand', text='count')
+        fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+        fig.update_layout({
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                },
+                )
+        st.plotly_chart(fig)
+    with col1:
+        fig = px.line(df_sales, x="Date", y=df_sales.columns,
               title='Sales by Brand')
+        fig.update_layout({
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                },
+                )
+
+    
+        st.plotly_chart(fig)
+
+    df_stocks = get_forecast()
+    with col2:
+        # st.write(df_stocks)
+        temp = df_stocks.loc[df_stocks['Brand'] == "Hyundai"]
+        temp.sort_values(by=['Date'], inplace=True, ascending=False)
+        fig = px.line(temp, x="Date", y="Close",
+              title='Stock Forecast by Brand - {}'.format("Hyundai"))
+        fig.update_layout({
+                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                },
+                )
+        st.plotly_chart(fig)
+    
+    df_trends = get_gtrends()
+    
+    # st.write(df_trends)
+    temp1 = df_trends.loc[df_trends['keyword'] == "Hyundai"]
+    temp1.sort_values(by=['Date'], inplace=True, ascending=False)
+    fig = px.line(temp1, x="Date", y="data",
+              title='Trends by Brand - {}'.format("Hyundai"))
     fig.update_layout({
                 'plot_bgcolor': 'rgba(0, 0, 0, 0)',
                 'paper_bgcolor': 'rgba(0, 0, 0, 0)',
                 },
                 )
     st.plotly_chart(fig)
+
 ############# Spare Parts Analysis #############
 
 def spare_parts():
@@ -94,7 +166,7 @@ def spare_parts():
     brand = ((analysis_df["brand"].unique()).tolist())
     brand.insert(0, "All Brands")
     with col3:
-        lvl_3 = st.selectbox("Select Vehicle Brand", options = brand, index = brand.index("SKODA"))
+        lvl_3 = st.selectbox("Select Vehicle Brand", options = brand, index = brand.index("All Brands"))
 
     analysis_df = analysis_df if lvl_3 == "All Brands" else df[df["brand"]==lvl_3]
     model = ((analysis_df["model"].unique()).tolist())
