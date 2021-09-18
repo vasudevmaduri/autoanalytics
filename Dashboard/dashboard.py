@@ -55,7 +55,9 @@ def get_sales():
     df = pd.read_csv("data//car_sales.csv")
     return df
 
-st.sidebar.image(image, user_column_width = False, width = 150 )
+
+
+# st.sidebar.image(image, user_column_width = False, width = 150 )
 
 def auto_analysis():
 
