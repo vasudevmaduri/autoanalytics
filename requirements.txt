@@ -94,7 +94,7 @@ args==0.1.0
 Flask==0.12.2
 Flask-Cors==3.0.2
 gunicorn==19.7.1
-scipy==0.19.1
+scipy
 tensorflow
 tflearn==0.3.2
 Werkzeug==0.12.2
