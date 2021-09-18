@@ -279,11 +279,24 @@ def twitter_analyser():
     st.markdown("<h2 style='text-align: center; color: black;'>Twitter Analyser📨</h2>", unsafe_allow_html=True)
     @st.cache(allow_output_mutation=True, show_spinner=False)
     def get_con():
-        USER = "postgres"
-        PWORD = "zOpKJDxG13fFFkFx"#
-        HOST = "35.197.148.152"#"34.136.184.102"
-        return create_engine('postgresql://{}:{}@{}/postgres'.format(USER, PWORD, HOST),
-                            convert_unicode=True)
+        # USER = "postgres"
+        # PWORD = "zOpKJDxG13fFFkFx"#
+        # HOST = "35.197.148.152"#"34.136.184.102"
+        # return create_engine('postgresql://{}:{}@{}/postgres'.format(USER, PWORD, HOST),
+        #                     convert_unicode=True)
+        db_user = os.environ["DB_USER"]
+        db_pass = os.environ["DB_PASS"]
+        db_name = os.environ["DB_NAME"]
+        db_socket_dir = os.environ.get("DB_SOCKET_DIR", "/cloudsql")
+        cloud_sql_connection_name = os.environ["CLOUD_SQL_CONNECTION_NAME"]
+
+        pool = create_engine(
+
+            # Equivalent URL:
+             'postgresql+pg8000://{}:{}@/{}?unix_sock={}/{}/.s.PGSQL.5432'.format(db_user,db_pass,db_name,db_socket_dir,cloud_sql_connection_name),convert_unicode=True
+          
+        )
+        return pool
 
 
     @st.cache(allow_output_mutation=True, show_spinner=False, ttl=5*60)
