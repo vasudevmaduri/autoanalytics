@@ -271,7 +271,7 @@ def spare_parts():
     
     except:
         st.write("No Data found for the selected combination")
-        im = Image.open("Dashboard//no.png")
+        img = Image.open("Dashboard//no.png")
         st.image(img)
         st.button()
 
@@ -469,7 +469,7 @@ st.sidebar.title("About")
 st.sidebar.info(
         """
         This project is created & maintained by **Auto Analytics Team**. You can learn more about us at
-        [our documentation](https://github.com/vasudevmaduri/OnePlus-Analysis/tree/dev).
+        [our documentation](https://github.com/vasudevmaduri/autoanalytics/tree/dev).
 
         **Our Team**:
         - [Ashish Shingla](https://www.linkedin.com/in/ashish--singla)
