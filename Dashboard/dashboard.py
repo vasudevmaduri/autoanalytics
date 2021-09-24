@@ -29,7 +29,7 @@ import time
 # We'll render HTML
 
 
-
+st.set_page_config(page_title = "Auto Analytics", page_icon = "🚘", layout = 'wide')
 
 max_width_str = f"max-width: 2000px;"
 st.markdown(
@@ -150,123 +150,130 @@ def spare_parts():
     st.markdown("<h2 style='text-align: center; color: black;'><b>Spare Parts Analysis 📉📈<b></h1>", unsafe_allow_html=True)
     df = get_sapres()
     col1, col2, col3, col4 = st.columns([2,3,2,1])
-    product_1 =  sorted(df["product_1"].unique())
-    product_1.insert(0, "All Products")
-    with col1:
-        lvl_1 = st.selectbox("Select product Type", options = product_1, index = product_1.index("All Products"))
+    try:
+        product_1 =  sorted(df["product_1"].unique())
+        product_1.insert(0, "All Products")
+        with col1:
+            lvl_1 = st.selectbox("Select product Type", options = product_1, index = product_1.index("All Products"))
+        
+        analysis_df = df if lvl_1 == "All Products" else df[df["product_1"]==lvl_1]
+        
+        product_2 = ((analysis_df["product"].unique()).tolist())
+        product_2.insert(0, "All Products")
+        with col2:
+            lvl_2 = st.selectbox("Select product Type", options = product_2, index = product_2.index("Front Bumper Bracket "))
+
+        analysis_df = analysis_df if lvl_2 == "All Products" else df[df["product"]==lvl_2]
+        brand = ((analysis_df["brand"].unique()).tolist())
+        brand.insert(0, "All Brands")
+        with col3:
+            lvl_3 = st.selectbox("Select Vehicle Brand", options = brand, index = brand.index("All Brands"))
+
+        analysis_df = analysis_df if lvl_3 == "All Brands" else df[df["brand"]==lvl_3]
+        model = ((analysis_df["model"].unique()).tolist())
+        model.insert(0, "All Models")
+        with col4:
+            lvl_4 = st.selectbox("Select Vehicle Model", options = model, index = model.index("All Models"))
+        
+        analysis_df = analysis_df if lvl_4 == "All Models" else df[df["model"]==lvl_4]
+
+        # st.dataframe(analysis_df)
+
+        c1,c2 = st.columns(2)
+        t = analysis_df
+        t = t.groupby("model").sum(["new_price_","old_price_"])
+        with c1:
+            fig = go.Figure()
+            fig.add_trace(go.Bar(y=t.index,
+                            x=t["new_price_"],
+                            name='New Price',
+                            marker_color='rgb(26, 118, 255)', orientation='h'
+                            ))
+
+            fig.add_trace(go.Bar(y=t.index,
+                            x=t["old_price_"],
+                            name='Old Price',
+                            marker_color='rgb(55, 83, 109)', orientation='h'
+                            ))
+
+            fig.update_layout(
+                title='Price Analysis for Front Bumper Bracket for brand HONDA',
+                xaxis_tickfont_size=14,
+                yaxis=dict(
+                    title='INR Rupees',
+                    titlefont_size=16,
+                    tickfont_size=14,
+                ),
+                barmode='group',
+                bargap=0.15, # gap between bars of adjacent location coordinates.
+                bargroupgap=0.1 # gap between bars of the same location coordinate.
+            )
+            fig.update_layout({
+                    'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                    'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                    },
+                    )
+            st.plotly_chart(fig)
+        
+        with c2:
+            fig1 = go.Figure()
+            fig1.add_trace(go.Bar(y=t.index,
+                            x=t["pct_change"],
+                            name='New Price',
+                            marker_color='rgb(26, 118, 255)', orientation='h'
+                            ))
+
+
+            fig1.update_layout(
+                title='Price Analysis for Front Bumper Bracket for brand HONDA',
+                xaxis_tickfont_size=14,
+                yaxis=dict(
+                    title='INR Rupees',
+                    titlefont_size=16,
+                    tickfont_size=14,
+                ),
+                barmode='group',
+                bargap=0.15, # gap between bars of adjacent location coordinates.
+                bargroupgap=0.1 # gap between bars of the same location coordinate.
+            )
+            fig1.update_layout({
+                    'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                    'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                    },
+                    )
+            st.plotly_chart(fig1)
+        
+        with c1:
+            #Avg Price change
+            avg_change = analysis_df["pct_change"].mean()
+            color = "green" if avg_change > 50 else "red"
+            gauge_fig_1 = go.Figure()
+            gauge_fig_1.add_trace(
+                    go.Indicator(
+                    mode = "gauge+number",
+                    value = avg_change,
+                    domain = {'x': [0, 1], 'y': [0.5, 1]},
+                    title = {'text': 'Percentage Change'},
+            #         delta = {'reference': delta},
+                    gauge = {'bar': {'color': color},'axis': {'range': [0, 100]}})
+                                )
+            gauge_fig_1.update_layout({
+                    'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+                    'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+                    },
+                    )
+            gauge_fig_1.update_layout(height=600, width=650)
+            st.plotly_chart(gauge_fig_1)
+        
+        # with c2:
+        #     temp_df = analysis_df[analysis_df["product"] == lvl_2]
+        #     st.dataframe(temp_df)
     
-    analysis_df = df if lvl_1 == "All Products" else df[df["product_1"]==lvl_1]
-    
-    product_2 = ((analysis_df["product"].unique()).tolist())
-    product_2.insert(0, "All Products")
-    with col2:
-        lvl_2 = st.selectbox("Select product Type", options = product_2, index = product_2.index("Front Bumper Bracket "))
-
-    analysis_df = analysis_df if lvl_2 == "All Products" else df[df["product"]==lvl_2]
-    brand = ((analysis_df["brand"].unique()).tolist())
-    brand.insert(0, "All Brands")
-    with col3:
-        lvl_3 = st.selectbox("Select Vehicle Brand", options = brand, index = brand.index("All Brands"))
-
-    analysis_df = analysis_df if lvl_3 == "All Brands" else df[df["brand"]==lvl_3]
-    model = ((analysis_df["model"].unique()).tolist())
-    model.insert(0, "All Models")
-    with col4:
-        lvl_4 = st.selectbox("Select Vehicle Model", options = model, index = model.index("All Models"))
-    
-    analysis_df = analysis_df if lvl_4 == "All Models" else df[df["model"]==lvl_4]
-
-    # st.dataframe(analysis_df)
-
-    c1,c2 = st.columns(2)
-    t = analysis_df
-    t = t.groupby("model").sum(["new_price_","old_price_"])
-    with c1:
-        fig = go.Figure()
-        fig.add_trace(go.Bar(y=t.index,
-                        x=t["new_price_"],
-                        name='New Price',
-                        marker_color='rgb(26, 118, 255)', orientation='h'
-                        ))
-
-        fig.add_trace(go.Bar(y=t.index,
-                        x=t["old_price_"],
-                        name='Old Price',
-                        marker_color='rgb(55, 83, 109)', orientation='h'
-                        ))
-
-        fig.update_layout(
-            title='Price Analysis for Front Bumper Bracket for brand HONDA',
-            xaxis_tickfont_size=14,
-            yaxis=dict(
-                title='INR Rupees',
-                titlefont_size=16,
-                tickfont_size=14,
-            ),
-            barmode='group',
-            bargap=0.15, # gap between bars of adjacent location coordinates.
-            bargroupgap=0.1 # gap between bars of the same location coordinate.
-        )
-        fig.update_layout({
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-                },
-                )
-        st.plotly_chart(fig)
-    
-    with c2:
-        fig1 = go.Figure()
-        fig1.add_trace(go.Bar(y=t.index,
-                        x=t["pct_change"],
-                        name='New Price',
-                        marker_color='rgb(26, 118, 255)', orientation='h'
-                        ))
-
-
-        fig1.update_layout(
-            title='Price Analysis for Front Bumper Bracket for brand HONDA',
-            xaxis_tickfont_size=14,
-            yaxis=dict(
-                title='INR Rupees',
-                titlefont_size=16,
-                tickfont_size=14,
-            ),
-            barmode='group',
-            bargap=0.15, # gap between bars of adjacent location coordinates.
-            bargroupgap=0.1 # gap between bars of the same location coordinate.
-        )
-        fig1.update_layout({
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-                },
-                )
-        st.plotly_chart(fig1)
-    
-    with c1:
-        #Avg Price change
-        avg_change = analysis_df["pct_change"].mean()
-        color = "green" if avg_change > 50 else "red"
-        gauge_fig_1 = go.Figure()
-        gauge_fig_1.add_trace(
-                go.Indicator(
-                mode = "gauge+number",
-                value = avg_change,
-                domain = {'x': [0, 1], 'y': [0.5, 1]},
-                title = {'text': 'Percentage Change'},
-        #         delta = {'reference': delta},
-                gauge = {'bar': {'color': color},'axis': {'range': [0, 100]}})
-                            )
-        gauge_fig_1.update_layout({
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-                'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-                },
-                )
-        gauge_fig_1.update_layout(height=600, width=650)
-        st.plotly_chart(gauge_fig_1)
-    
-    with c2:
-        temp_df = analysis_df[analysis_df["product"] == lvl_2]
-        st.dataframe(temp_df)
+    except:
+        st.write("No Data found for the selected combination")
+        im = Image.open("Dashboard//no.png")
+        st.image(img)
+        st.button()
 
 
 
