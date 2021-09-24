@@ -273,7 +273,7 @@ def spare_parts():
         st.write("No Data found for the selected combination")
         img = Image.open("Dashboard//no.png")
         st.image(img)
-        st.button()
+        # st.button()
 
 
 
